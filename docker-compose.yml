@@ -3,8 +3,6 @@ version: '3.2'
 services:
   zookeeper:
     image: zookeeper
-    ports:
-      - 8081:8080
 
   nimbus:
     image: storm
@@ -16,18 +14,19 @@ services:
     volumes:
       - './storm-nimbus:/theproject'
 
-  ui:
-    image: storm
-    command: storm ui
-    depends_on:
-      - nimbus
-      - zookeeper
-    ports:
-      - 8080:8080
-
   supervisor:
     image: storm
     command: storm supervisor
     depends_on:
       - nimbus
       - zookeeper
+
+  ui:
+    image: storm
+    command: storm ui
+    depends_on:
+      - nimbus
+      - zookeeper
+      - supervisor
+    ports:
+      - 8080:8080

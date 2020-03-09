@@ -2,4 +2,4 @@ storm jar target/coincident-hashtags-1.2.1.jar coincident_hashtags.ExclamationTo
 
 
 
-[Supervisor](http://localhost:6627)
+[Storm UI](http://localhost:8080)
