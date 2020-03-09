@@ -1,39 +1,32 @@
-FROM ubuntu
+FROM ubuntu:18.04
 
 # Install required packages
 
 RUN apt-get update && \
     apt-get install -y build-essential && \
     apt-get install -y software-properties-common && \
-    apt-get install -y python
+    apt-get install -y python && \
+    apt-get install -y wget
 
 # Install Java.
-
-RUN \
-  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-  add-apt-repository -y ppa:webupd8team/java && \
-  apt-get update && \
-  apt-get install -y oracle-java8-installer && \
-  rm -rf /var/lib/apt/lists/* && \
-  rm -rf /var/cache/oracle-jdk8-installer
-
-ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
-
+RUN apt-get update && \
+    apt-get install -y openjdk-11-jdk && \
+    update-alternatives --config java
 
 # Install Storm.
 
-ENV STORM_USER=usama \
+ENV STORM_USER=ubuntu \
     STORM_CONF_DIR=/conf \
     STORM_DATA_DIR=/data \
     STORM_LOG_DIR=/logs
 
 # Add a user and make dirs
 RUN set -ex; \
-    adduser "$STORM_USER"; \
+    adduser --disabled-password --gecos "" "$STORM_USER"; \
     mkdir -p "$STORM_CONF_DIR" "$STORM_DATA_DIR" "$STORM_LOG_DIR"; \
     chown -R "$STORM_USER:$STORM_USER" "$STORM_CONF_DIR" "$STORM_DATA_DIR" "$STORM_LOG_DIR"``
 
-ARG DISTRO_NAME=apache-storm-1.2.1
+ARG DISTRO_NAME=apache-storm-2.1.0
 
 # Download Apache Storm.
 RUN set -ex; \
@@ -52,7 +45,7 @@ RUN chown -R "$STORM_USER" "$STORM_CONF_DIR" "$STORM_DATA_DIR" "$STORM_LOG_DIR"
 
 # Install Maven.
 
-ENV MAVEN_VERSION="3.5.3" \
+ENV MAVEN_VERSION="3.6.3" \
     M2_HOME=/usr/lib/mvn
 
 RUN cd /tmp && \
